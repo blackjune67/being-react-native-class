@@ -1,72 +1,62 @@
-import {StatusBar} from 'expo-status-bar';
 import React, {Component} from 'react';
-import { StyleSheet, View, Dimensions, Text, ScrollView } from 'react-native';
+import {StyleSheet, View, Dimensions, Text, ScrollView, StatusBar } from 'react-native';
+import Weather from "./Weather";
+import * as Location from 'expo-location';
 
 export default class App extends Component {
+    state = {
+        isLoading: false
+    };
 
-
+    getLocation = async() => {
+        try {
+            await Location.requestForegroundPermissionsAsync();
+            const location = await Location.getCurrentPositionAsync();
+            console.log(location)
+        } catch (error) {
+            Alert.alert('실패');
+        }
+    }
+    componentDidMount() {
+        this.getLocation();
+    }
 
     render() {
-      return (
-          <View style={styles.container}>
-            <View style={styles.city}>
-              <Text style={styles.cityName}>{city}</Text>
+        const {isLoading} = this.state;
+
+        return (
+            <View style={styles.loading}>
+                {/*<StatusBar style="light" />*/}
+                <StatusBar hidden={true} />
+                {isLoading ? <Weather/> : (
+                    <Text style={styles.loadingText}>Getting the fucking weather!!</Text>
+                )}
             </View>
-            <ScrollView
-                pagingEnabled
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.weather}
-            >
-              <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-              </View>
-              <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-              </View>
-              <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-              </View>
-              <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-              </View>
-            </ScrollView>
-          </View>
-      )
+        )
     }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "yellow",
-  },
-  city: {
-    flex: 1.2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cityName: {
-    fontSize: 48,
-    fontWeight: "500",
-  },
-  weather: {
-    // backgroundColor: "blue",
-  },
-  day: {
-    width: SCRREN_WIDTH,
-    alignItems: "center",
-  },
-  temp: {
-    marginTop: 50,
-    fontSize: 178,
-  },
-  description: {
-    marginTop: -30,
-    fontSize: 60,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+    loading: {
+        flex: 1,
+        backgroundColor: "#FDF6AA",
+        justifyContent: "flex-end",
+    },
+    loadingText: {
+        fontSize: 38,
+        marginBottom: 24,
+        paddingLeft: 25
+    },
+    // temp: {
+    //     marginTop: 50,
+    //     fontSize: 178,
+    // },
+    // description: {
+    //     marginTop: -30,
+    //     fontSize: 60,
+    // },
 });
